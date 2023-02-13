@@ -2,20 +2,26 @@ import { saveAs } from "file-saver";
 import "./ImageListItem.css";
 
 export function ImageListItem({ img }) {
-  async function saveImage() {
+  async function saveImage(e) {
+    e.preventDefault();
     let blob = await fetch(img.download_url).then((r) => r.blob());
     saveAs(blob, img.author + "" + img.id);
   }
   return (
     <li>
-      <div onClick={saveImage} className="card">
-        <img src={img.download_url} alt="" />
+      <div className="card">
+        <a href={img.url}>
+          <img src={img.download_url} alt="" className="img" />
+        </a>
         <div className="card__header">
           <img className="card__thumb" src={img.download_url} alt="" />
           <div>
             <h3 className="card__title">{img.author}</h3>
             <span className="card__status">
               Original size : {img.width}x{img.height}
+              <div>
+                <button onClick={saveImage}>Download</button>
+              </div>
             </span>
           </div>
         </div>

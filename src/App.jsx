@@ -4,33 +4,42 @@ import axios from "axios";
 import { useScrollPosition } from "./hooks/useScrollPosition";
 import throttle from "lodash.throttle";
 import { ImageList } from "./components/ImageList/ImageList";
+import s from "./App.module.css";
+
+const MIN_TIME_BFR_NEXT_FETCH = 5000;
+
 export function App() {
-  const [imageList, setImageList] = useState(d);
+  const [imageList, setImageList] = useState([]);
   const [pageToFetch, setPageToFetch] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const { isBottom } = useScrollPosition();
 
-  // Fetch images any time a page change
+  // Fetch les images à chaque changement de pages
   useEffect(() => {
-    // fetchImgListByPage();
+    fetchImgListByPage();
   }, [pageToFetch]);
 
   // La page a été incrémenté et on est en bas de la page, alors on fetch de nouvelles images
   useEffect(() => {
     if (isBottom) {
+      setIsLoading(true);
       throttledSetNextPage();
     }
   }, [isBottom, pageToFetch]);
 
   // return a version of incrementPage that can't be called more than once every 2 secondes
   // We also use useCallback to make sure we use the same version of the throlled function
-  const throttledSetNextPage = useCallback(throttle(incrementPage, 2000), []);
+  const throttledSetNextPage = useCallback(
+    throttle(incrementPage, MIN_TIME_BFR_NEXT_FETCH),
+    []
+  );
 
   function incrementPage() {
     setPageToFetch((pageToFetch) => pageToFetch + 1);
   }
 
-  // Fetch 10 images in the page number “pageToFetch" from picsum photo api
-  // Then add these 10 img in our imgList
+  // Fetch 10 images à la page “pageToFetch" de l'api de lorem picsum
+  // Ajoute ensuite les 10 images à la liste des données
 
   async function fetchImgListByPage() {
     console.log("Fetch page ", pageToFetch);
@@ -38,27 +47,20 @@ export function App() {
       await axios(`https://picsum.photos/v2/list?page=${pageToFetch}&limit=10`)
     ).data;
     setImageList([...imageList, ...imgListResp]);
+    setIsLoading(false);
   }
 
   return (
-    <div
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        display: "flex",
-        flexDirection: "column",
-        padding: 20,
-      }}
-    >
+    <div className={s.root}>
       <h1>Rand'images</h1>
-      <h2>Scroll to get random open source images</h2>
-      <div style={{ width: 800 }}>
-        <ImageList imageList={imageList} />
-      </div>
+      <h2 className={s.subtitle}>Scroll to get random open source images</h2>
+      <ImageList imageList={imageList} />
+      {isLoading && <div className="spinner-border" role="status" />}
     </div>
   );
 }
 
+/*
 const d = [
   {
     id: "0",
@@ -205,3 +207,5 @@ const d = [
     download_url: "https://picsum.photos/id/17/2500/1667",
   },
 ];
+
+*/

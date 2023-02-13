@@ -1,0 +1,11 @@
+.root{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .subtitle{
+    margin-bottom: 20px;
+  }

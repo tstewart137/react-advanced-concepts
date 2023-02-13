@@ -4,18 +4,19 @@
 }
 
 .card {
-    height: 100%;  
     border-radius: 40px;
     overflow: hidden;
-    text-decoration: none;
   }
 
   .card__header {
     display: flex;
     gap: 2em;
-    padding: 2em;
-    border-radius: (var(--borderRadius) 0 0 0);    
-    background-color:white;
+    padding: 1em;
+  }
+  
+  .img{
+    width: 500px;
+    height: 300px;
   }
   
   .card__thumb {
